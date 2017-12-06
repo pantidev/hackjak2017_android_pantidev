@@ -1,20 +1,31 @@
-package com.puninar.jakpark;
+package hackjak.pantidev.tako;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.common.ConnectionResult;
@@ -28,14 +39,17 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 public class Map extends FragmentActivity implements LocationListener,
         OnMapReadyCallback,
@@ -44,13 +58,21 @@ public class Map extends FragmentActivity implements LocationListener,
 
     private GoogleMap mMap;
 
+    TextView tvNama, tvAlamat, tvLuas, tvResmi, tvEmail;
+    Button btnReport;
+
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
     private LocationManager locationManager;
     Location location;
     String URL = "http://ppid.jakarta.go.id/json?url=http://data.jakarta.go.id/dataset/a96e0288-90d8-48b1-9c3a-9db11372e59f/resource/a6ffd51f-279d-49d6-9f33-eed327ea4753/download/RPTRA-Peresmian-sampai-dengan-Maret-2017.csv";
-
     String TAG = this.getClass().getSimpleName();
+
+    Bitmap rptra_bitmap, tawuran_bitmap;
+    BitmapDescriptor rptra_icon, tawuran_icon;
+
+    ArrayList<Rptra_Setter_Getter> rptraAr = new ArrayList<>();
+    ArrayList<String>tempRPTRA = new ArrayList<>();
 
     private static final long INTERVAL = 1000 * 20;
     private static final long FASTEST_INTERVAL = 1000 * 10;
@@ -84,6 +106,32 @@ public class Map extends FragmentActivity implements LocationListener,
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        Log.d("LOCATION", String.valueOf(location));
+        if (location == null){
+            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
+
+        BitmapDrawable bitmap_rptra = (BitmapDrawable) getResources().getDrawable(R.drawable.tako_marker);
+        Bitmap rptra_bit = bitmap_rptra.getBitmap();
+        rptra_bitmap = Bitmap.createScaledBitmap(rptra_bit, 70, 100, false);
+        rptra_icon = BitmapDescriptorFactory.fromBitmap(rptra_bitmap);
+
+        BitmapDrawable bitmap_tawuran = (BitmapDrawable) getResources().getDrawable(R.drawable.war_icon);
+        Bitmap tawuran_bit = bitmap_tawuran.getBitmap();
+        tawuran_bitmap = Bitmap.createScaledBitmap(tawuran_bit, 70, 100, false);
+        tawuran_icon = BitmapDescriptorFactory.fromBitmap(tawuran_bitmap);
     }
 
 
@@ -114,6 +162,8 @@ public class Map extends FragmentActivity implements LocationListener,
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setRotateGesturesEnabled(true);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-3.503399, 112.423781), 4.0f));
+
 
         //get taman
         StringRequest req_rptra = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
@@ -125,20 +175,27 @@ public class Map extends FragmentActivity implements LocationListener,
                         JSONObject obj = jsonArray.getJSONObject(i);
 
                         String id = obj.getString("id");
-                        if (id != "129") {
-                            String nama_rptra = obj.getString("nama_rptra");
-                            String alamat = obj.getString("alamat");
-                            String kelurahan = obj.getString("kelurahan");
-                            String kecamatan = obj.getString("kecamatan");
-                            String kab_kota = obj.getString("kab_kota");
-                            String luas = obj.getString("luas");
-                            String waktu_peresmiaan = obj.getString("waktu_peresmiaan");
-                            String alamat_email = obj.getString("alamat_email");
-                            Double latitude_lokasi = Double.valueOf(obj.getString("latitude_lokasi"));
-                            Double longitude_lokasi = Double.valueOf(obj.getString("longitude_lokasi"));
+                        if (!id.equalsIgnoreCase("129")) {
+                            String latitude = obj.getString("latitude_lokasi");
+                            String longitude = obj.getString("longitude_lokasi");
+                            if (!latitude.equalsIgnoreCase("")||!longitude.equalsIgnoreCase("")) {
+                                Log.d("id", id);
+                                String nama_rptra = obj.getString("nama_rptra");
+                                String alamat = obj.getString("alamat");
+                                String kelurahan = obj.getString("kelurahan");
+                                String kecamatan = obj.getString("kecamatan");
+                                String kab_kota = obj.getString("kab_kota");
+                                String luas = obj.getString("luas");
+                                String waktu_peresmiaan = obj.getString("waktu_peresmiaan");
+                                String alamat_email = obj.getString("alamat_email");
+                                double latitude_lokasi = Double.parseDouble(latitude);
+                                double longitude_lokasi = Double.parseDouble(longitude);
+                                String address = alamat+" "+kelurahan+" "+kecamatan+" "+kab_kota;
 
-
-                            mMap.addMarker(new MarkerOptions().position(new LatLng(latitude_lokasi, longitude_lokasi)).title(nama_rptra));
+                                rptraAr.add(new Rptra_Setter_Getter(id,nama_rptra,address,luas,waktu_peresmiaan,alamat_email));
+                                tempRPTRA.add(id);
+                                mMap.addMarker(new MarkerOptions().position(new LatLng(latitude_lokasi, longitude_lokasi)).title(id).icon(rptra_icon));
+                            }
                         }
 
                     }
@@ -149,18 +206,24 @@ public class Map extends FragmentActivity implements LocationListener,
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                    Toast.makeText(Map.this, "Please Check Your Connection", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(Map.this, error+"\nPlease Contact pantidev2017@gmail.com", Toast.LENGTH_LONG).show();
+                }
             }
         });
         MySingleton.getInstance(Map.this).addToRequestQueue(req_rptra);
 
         //Get tawuran
-        /*StringRequest tawuran = new StringRequest(Request.Method.GET, "http://api.jakarta.go.id/ruang-publik/tawuran",
+        StringRequest tawuran = new StringRequest(Request.Method.GET,
+                "http://awseb-e-e-awsebloa-19aedqm1ecvzp-1894315445.ap-southeast-1.elb.amazonaws.com/tawuran",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            JSONArray jsonArray = new JSONArray(response);
+                            JSONObject jsonObject = new JSONObject(response);
+                            JSONArray jsonArray = jsonObject.getJSONArray("data");
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject obj = jsonArray.getJSONObject(i);
 
@@ -171,7 +234,7 @@ public class Map extends FragmentActivity implements LocationListener,
                                 Double longitude = Double.valueOf(obj.getString("longitude_lokasi"));
 
 
-                                mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("Tawuran"));
+                                mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("Tawuran").icon(tawuran_icon));
 
                             }
                         } catch (JSONException e) {
@@ -181,37 +244,62 @@ public class Map extends FragmentActivity implements LocationListener,
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                    Toast.makeText(Map.this, "Please Check Your Connection", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(Map.this, error+"\nPlease Contact pantidev2017@gmail.com", Toast.LENGTH_LONG).show();
+                }
             }
         });
-        MySingleton.getInstance(Map.this).addToRequestQueue(tawuran);*/
+        MySingleton.getInstance(Map.this).addToRequestQueue(tawuran);
 
-        // Add a marker in Sydney and move the camera
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
-            public void run() {
-                if (ActivityCompat.checkSelfPermission(Map.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(Map.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                Log.d("LOCATION", String.valueOf(location));
-                if (location == null){
-                    location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                }
+            public boolean onMarkerClick(Marker marker) {
+                if (!marker.getTitle().equalsIgnoreCase("Tawuran")){
+                    final Dialog markerDialog;
+                    final int index = tempRPTRA.indexOf(marker.getTitle());
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        markerDialog = new Dialog(Map.this, android.R.style.Theme_Material_Dialog_Alert);
 
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLongitude(),location.getLatitude()),10.0f));
+                    } else {
+                        markerDialog = new Dialog(Map.this);
+                    }
 
+                    markerDialog.setTitle("Detail RPTRA");
+                    markerDialog.getWindow().setBackgroundDrawableResource(R.drawable.box_ash);
+                    markerDialog.setContentView(R.layout.detail_marker);
+
+                    tvNama = markerDialog.findViewById(R.id.tvNama);
+                    tvAlamat = markerDialog.findViewById(R.id.tvAlamat);
+                    tvLuas = markerDialog.findViewById(R.id.tvLuas);
+                    tvResmi = markerDialog.findViewById(R.id.tvResmi);
+                    tvEmail = markerDialog.findViewById(R.id.tvEmail);
+                    btnReport = markerDialog.findViewById(R.id.btnReport);
+
+                    tvNama.setText(rptraAr.get(index).getNama());
+                    tvAlamat.setText(rptraAr.get(index).getAddress());
+                    tvLuas.setText(rptraAr.get(index).getLuas()+"m2");
+                    tvResmi.setText(rptraAr.get(index).getWaktuperesmian());
+                    tvEmail.setText(rptraAr.get(index).getEmail());
+
+                    btnReport.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent report = new Intent(Map.this,Report.class);
+                            report.putExtra("id",rptraAr.get(index).getId());
+                            report.putExtra("nama",rptraAr.get(index).getNama());
+                            startActivity(report);
+                        }
+                    });
+
+
+                    markerDialog.show();
+                }
+                    return true;
             }
-        },2000);
+        });
+
     }
 
     @Override
@@ -249,7 +337,7 @@ public class Map extends FragmentActivity implements LocationListener,
     }
 
     protected void startLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding

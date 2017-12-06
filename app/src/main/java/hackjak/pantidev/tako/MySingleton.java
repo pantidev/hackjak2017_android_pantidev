@@ -1,4 +1,4 @@
-package com.puninar.jakpark;
+package hackjak.pantidev.tako;
 
 
 import android.content.Context;

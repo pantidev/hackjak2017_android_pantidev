@@ -1,4 +1,4 @@
-package com.puninar.jakpark;
+package hackjak.pantidev.tako;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.puninar.jakpark", appContext.getPackageName());
+        assertEquals("hackjak.pantidev.tako", appContext.getPackageName());
     }
 }

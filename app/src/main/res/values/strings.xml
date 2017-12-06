@@ -1,4 +1,15 @@
 <resources>
-    <string name="app_name">JakPark</string>
-    <string name="title_activity_map">Map</string>
+    <string name="app_name">Tako</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="Logo">Selamat Datang di TAKO\n Peta dan Pengaduan Sekitar RPTRA</string>
+
+    <string-array name="Event">
+        <item>Pilih Tema Pelaporan</item>
+        <item>Lingkungan</item>
+        <item>Pencurian</item>
+        <item>Penculikan</item>
+        <item>Rusuh</item>
+        <item>Tawuran/Perkelahian</item>
+    </string-array>
+
 </resources>

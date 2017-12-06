@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.puninar.jakpark.Report"
     android:orientation="vertical"
     >
 
@@ -22,7 +21,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:textColor="#000"
-            android:text="Lokasi"
+            android:text="Nama RPTRA"
             android:gravity="center_vertical"
             />
         <TextView
@@ -37,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.55"
-            android:id="@+id/tvEvent"
+            android:id="@+id/tvNama"
             />
     </LinearLayout>
 
@@ -67,6 +66,77 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.55"
             android:id="@+id/spnEvent"
+            />
+    </LinearLayout>
+
+
+    <ImageView
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        android:src="@android:drawable/ic_menu_camera"
+        android:layout_marginTop="10sp"
+        android:layout_marginBottom="5sp"
+        android:layout_marginRight="5sp"
+        android:layout_marginLeft="5sp"
+        android:id="@+id/ivCamera"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/llReportImage"
+        android:layout_marginTop="10sp"
+        android:layout_marginBottom="5sp"
+        android:layout_marginRight="5sp"
+        android:layout_marginLeft="5sp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/box_border">
+
+    </LinearLayout>
+
+
+        <EditText
+            android:layout_marginTop="10sp"
+            android:layout_marginBottom="5sp"
+            android:layout_marginRight="5sp"
+            android:layout_marginLeft="5sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtPesan"
+            android:lines="4"
+            />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="3"
+        android:layout_marginTop="10sp"
+        android:layout_marginBottom="5sp"
+        android:layout_marginRight="5sp"
+        android:layout_marginLeft="5sp"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textColor="#000"
+            android:text="Pelapor"
+            android:gravity="center_vertical"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1.45"
+            android:text=":"
+            android:gravity="center"
+            android:textColor="#000"
+            />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.55"
+            android:id="@+id/txtPelapor"
             />
     </LinearLayout>
 
