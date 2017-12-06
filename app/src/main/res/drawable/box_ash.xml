@@ -3,8 +3,13 @@
 
     <!--garis pinggir-->
     <stroke
-        android:width="2dp"
-        android:color="#1c76ff" />
+        android:width="1dp"
+        android:color="#7a7a7a">
+
+    </stroke>
+
+    <corners
+        android:radius="10dp" />
 
     <padding
         android:top="2dp"
@@ -13,7 +18,7 @@
         android:bottom="2dp"/>
 
 
-    <solid android:color="#494747" />
+    <solid android:color="@color/backgroundTransparent" />
 
     <!--SUDUT-->
 

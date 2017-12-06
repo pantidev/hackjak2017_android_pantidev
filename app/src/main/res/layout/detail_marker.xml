@@ -10,7 +10,7 @@
         android:layout_gravity="right"
         android:background="@drawable/box_ash"
         android:text="Report"
-        android:textColor="#ffffff"
+        android:textColor="@color/font"
         android:textAllCaps="false"
         android:layout_margin="5dp"
         android:id="@+id/btnReport"/>
@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1.1"
-            android:textColor="#ffffff"
+            android:textColor="@color/font"
             android:text="Nama"
             android:gravity="center_vertical"
             />
@@ -38,14 +38,14 @@
             android:layout_weight="1.45"
             android:text=":"
             android:gravity="center"
-            android:textColor="#ffffff"
+            android:textColor="@color/font"
             />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.45"
             android:id="@+id/tvNama"
-            android:textColor="#ffffff"
+            android:textColor="@color/font"
 
             />
     </LinearLayout>
@@ -63,7 +63,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1.1"
-            android:textColor="#ffffff"
+            android:textColor="@color/font"
             android:text="Alamat"
 
             />
@@ -72,14 +72,14 @@
             android:layout_height="match_parent"
             android:layout_weight="1.45"
             android:text=":"
-            android:textColor="#ffffff"
+            android:textColor="@color/font"
             />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.45"
             android:id="@+id/tvAlamat"
-            android:textColor="#ffffff"
+            android:textColor="@color/font"
 
             />
     </LinearLayout>
@@ -97,7 +97,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1.1"
-            android:textColor="#ffffff"
+            android:textColor="@color/font"
             android:text="Peresmian"
             android:gravity="center_vertical"
             />
@@ -107,14 +107,14 @@
             android:layout_weight="1.45"
             android:text=":"
             android:gravity="center"
-            android:textColor="#ffffff"
+            android:textColor="@color/font"
             />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.45"
             android:id="@+id/tvResmi"
-            android:textColor="#ffffff"
+            android:textColor="@color/font"
 
             />
     </LinearLayout>
@@ -132,7 +132,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1.1"
-            android:textColor="#ffffff"
+            android:textColor="@color/font"
             android:text="Luas"
             android:gravity="center_vertical"
             />
@@ -142,14 +142,14 @@
             android:layout_weight="1.45"
             android:text=":"
             android:gravity="center"
-            android:textColor="#ffffff"
+            android:textColor="@color/font"
             />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.45"
             android:id="@+id/tvLuas"
-            android:textColor="#ffffff"
+            android:textColor="@color/font"
 
             />
     </LinearLayout>
@@ -167,7 +167,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1.1"
-            android:textColor="#ffffff"
+            android:textColor="@color/font"
             android:text="Email"
             android:gravity="center_vertical"
             />
@@ -177,14 +177,14 @@
             android:layout_weight="1.45"
             android:text=":"
             android:gravity="center"
-            android:textColor="#ffffff"
+            android:textColor="@color/font"
             />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.45"
             android:id="@+id/tvEmail"
-            android:textColor="#ffffff"
+            android:textColor="@color/font"
             />
         
     </LinearLayout>
@@ -192,14 +192,14 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="1dp" 
-        android:background="#ffffff"/>
+        android:background="@color/font"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="Dashboard Report"
-        android:textColor="#ffffff"
+        android:textColor="@color/font"
         android:gravity="center"/>
 
     <LinearLayout
@@ -224,7 +224,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Lingkungan"
-                android:textColor="#ffffff"
+                android:textColor="@color/font"
                 android:gravity="center"
                 android:background="@drawable/box_ash"/>
 
@@ -232,12 +232,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:backgroundTint="@color/backgroundTransparent"
                 android:background="@drawable/box_ash">
 
                 <ImageView
                     android:layout_width="50sp"
                     android:layout_height="50sp"
                     android:src="@drawable/sad"
+                    android:tint="#f4773d"
                     android:layout_gravity="center"/>
 
             </LinearLayout>
@@ -252,7 +254,7 @@
                     android:background="@drawable/box_ash"
                     android:gravity="center"
                     android:text="1"
-                    android:textColor="#ffffff"
+                    android:textColor="@color/font"
                     android:textSize="35sp"
                     android:id="@+id/tvRepLingkungan"/>
 
@@ -273,7 +275,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Kejahatan"
-                android:textColor="#ffffff"
+                android:textColor="@color/font"
                 android:gravity="center"
                 android:background="@drawable/box_ash"/>
 
@@ -282,12 +284,14 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:background="@drawable/box_ash"
+                android:backgroundTint="@color/backgroundTransparent"
                 >
 
                 <ImageView
                     android:layout_width="50sp"
                     android:layout_height="50sp"
                     android:src="@drawable/sad"
+                    android:tint="#f4773d"
                     android:layout_gravity="center"/>
 
             </LinearLayout>
@@ -300,7 +304,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/box_ash"
-                    android:textColor="#ffffff"
+                    android:textColor="@color/font"
                     android:text="1"
                     android:textSize="35sp"
                     android:gravity="center"
