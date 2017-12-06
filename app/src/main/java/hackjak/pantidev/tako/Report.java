@@ -10,9 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -74,8 +76,11 @@ public class Report extends AppCompatActivity {
         llReportImage = findViewById(R.id.llReportImage);
         spnEvent = findViewById(R.id.spnEvent);
 
-        @SuppressLint("ResourceType")
-        ArrayAdapter<String>adapter = new ArrayAdapter<String>(Report.this,android.R.layout.simple_dropdown_item_1line,R.array.Event);
+        //@SuppressLint("ResourceType")
+        //ArrayAdapter<String>adapter = new ArrayAdapter<String>(Report.this,android.R.layout.simple_dropdown_item_1line,R.array.Event);
+
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Event,android.R.layout.simple_dropdown_item_1line);
         spnEvent.setAdapter(adapter);
 
         cameraPhoto = new CustomCamera(getApplicationContext());
@@ -84,25 +89,32 @@ public class Report extends AppCompatActivity {
         if (bundle != null){
             tvLokasi.setText(bundle.getString("nama"));
             id = bundle.getString("id");
-        }
 
-        ivCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (llReportImage.getChildCount()>0){
-                    Toast.makeText(getApplicationContext(), "Photo already taken, please insert or delete in preview first", Toast.LENGTH_SHORT).show();
-                }else {
-                    try {
-                        Intent in = cameraPhoto.takePhotoIntent();
-                        startActivityForResult(in, CAMERA_REQUEST);
-                        cameraPhoto.addToGallery();
-                    } catch (IOException e) {
-                        Toast.makeText(getApplicationContext(),
-                                "Something Wrong while taking photos", Toast.LENGTH_SHORT).show();
+            ivCamera.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (llReportImage.getChildCount()>0){
+                        Toast.makeText(getApplicationContext(), "Photo already taken, please insert or delete in preview first", Toast.LENGTH_SHORT).show();
+                    }else {
+                        try {
+                            Intent in = cameraPhoto.takePhotoIntent();
+                            startActivityForResult(in, CAMERA_REQUEST);
+                            cameraPhoto.addToGallery();
+                        } catch (IOException e) {
+                            Toast.makeText(getApplicationContext(),
+                                    "Something Wrong while taking photos", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
+
+        else
+        {
+            finishAffinity();
+        }
+
+
 
     }
 
@@ -121,7 +133,7 @@ public class Report extends AppCompatActivity {
 
                 try {
                     Bitmap bitmap = PhotoLoader.init().from(photoPath).requestSize(512, 512).getBitmap();
-                    Bitmap Scaled = Bitmap.createScaledBitmap(bitmap, 400, 450, false);
+                    Bitmap Scaled = Bitmap.createScaledBitmap(bitmap, 300, 250, false);
                     ImageView imageView = new ImageView(getApplicationContext());
                     ImageView clearPhoto = new ImageView(getApplicationContext());
 
@@ -150,9 +162,11 @@ public class Report extends AppCompatActivity {
                     llReportImage.addView(llCamera);
 
                     final LinearLayout llCam2 = llCamera;
+                    ivCamera.setVisibility(View.GONE);
                     clearPhoto.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            ivCamera.setVisibility(View.VISIBLE);
                             llReportImage.removeView(llCam2);
                             photoPath = "";
 
@@ -221,12 +235,15 @@ public class Report extends AppCompatActivity {
 
     }
 
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.approve_menu,menu);
         return super.onCreateOptionsMenu(menu);
     }
+    */
 
+    /*
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -248,6 +265,7 @@ public class Report extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+    */
 
     public void insert(){
         StringRequest req_rptra = new StringRequest(Request.Method.POST,
@@ -278,5 +296,19 @@ public class Report extends AppCompatActivity {
         };
         MySingleton.getInstance(Report.this).addToRequestQueue(req_rptra);
 
+    }
+
+    public void submitReport(View view) {
+        if (spnEvent.getSelectedItem().equals("Pilih Tema Pelaporan")){
+            Toast.makeText(this, "Tolong Pilih Tema Pelaporan", Toast.LENGTH_SHORT).show();
+        }else if (llReportImage.getChildCount()==0){
+            Toast.makeText(this, "Tolong Berikan 1 Foto TKP ", Toast.LENGTH_SHORT).show();
+        }else if(txtPesan.getText().toString().trim().isEmpty()){
+            Toast.makeText(this, "Tolong Isi Pesan / Keterangan Kejadian", Toast.LENGTH_SHORT).show();
+        }else if(txtPelapor.getText().toString().trim().isEmpty()){
+            Toast.makeText(this, "Tolong Ketik Nama Anda Pada Kolom Pelapor", Toast.LENGTH_SHORT).show();
+        }else{
+
+        }
     }
 }

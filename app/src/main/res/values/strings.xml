@@ -2,6 +2,7 @@
     <string name="app_name">Tako</string>
     <string name="title_activity_maps">Map</string>
     <string name="Logo">Selamat Datang di TAKO\n Peta dan Pengaduan Sekitar RPTRA</string>
+    <string name="approve">Approve</string>
 
     <string-array name="Event">
         <item>Pilih Tema Pelaporan</item>

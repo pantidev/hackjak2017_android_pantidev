@@ -5,6 +5,6 @@
     <item
         android:id="@+id/approve"
         android:icon="@drawable/submit_action"
-        android:title="Approve"
+        android:title="@string/approve"
         app:showAsAction="always" />
 </menu>
