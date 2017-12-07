@@ -1,7 +1,7 @@
 # hackjak2017_android_pantidev
 ## repository for hackjack 2017 developed by pantidev
 
-## data owned by Pemprov DKI Jakarta which has been used in this applications as listed bellow:
+## data owned by Pemprov DKI Jakarta which has been used in this application as listed bellow:
 
 1. http://ppid.jakarta.go.id/json?url=http://data.jakarta.go.id/dataset/a0f68e1c-1aff-4316-a2d6-6550a9a78937/resource/a84bf95d-21db-45e4-90a0-6277a01d32ab/download/ruang-laktasi.csv
 2. http://ppid.jakarta.go.id/json?url=http://data.jakarta.go.id/dataset/a96e0288-90d8-48b1-9c3a-9db11372e59f/resource/a6ffd51f-279d-49d6-9f33-eed327ea4753/download/RPTRA-Peresmian-sampai-dengan-Maret-2017.csv
