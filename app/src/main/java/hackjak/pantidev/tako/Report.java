@@ -296,15 +296,6 @@ public class Report extends AppCompatActivity {
     }
 
     public void submitReport(View view) {
-        Dialog okDialog;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            okDialog = new Dialog(Report.this, android.R.style.Theme_Holo_Dialog_NoActionBar_MinWidth);
-
-        } else {
-            okDialog = new Dialog(Report.this);
-        }
-        okDialog.setContentView(R.layout.success_dialog);
-        okDialog.show();
         if (spnEvent.getSelectedItem().equals("Pilih Tema Pelaporan")){
             Toast.makeText(this, "Tolong Pilih Tema Pelaporan", Toast.LENGTH_SHORT).show();
         }else if (llReportImage.getChildCount()==0){
