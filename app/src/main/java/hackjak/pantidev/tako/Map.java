@@ -39,6 +39,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -117,6 +118,7 @@ public class Map extends FragmentActivity implements LocationListener,
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+        MapsInitializer.initialize(this);
         mapFragment.getMapAsync(this);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -284,6 +286,7 @@ public class Map extends FragmentActivity implements LocationListener,
 
                     lingkungan.clear();
                     kejahatan.clear();
+
                     showpDialog();
                     Log.d("INDEX",String.valueOf(index+1));
                     StringRequest dashboard = new StringRequest(Request.Method.GET,
@@ -425,49 +428,6 @@ public class Map extends FragmentActivity implements LocationListener,
                 "pdate started ..............: ");
     }
 
-    public void getReport(){
-        lingkungan.clear();
-        kejahatan.clear();
-        showpDialog();
-        Log.d("INDEX",String.valueOf(index+1));
-        StringRequest dashboard = new StringRequest(Request.Method.GET,
-                "http://awseb-e-e-awsebloa-19aedqm1ecvzp-1894315445.ap-southeast-1.elb.amazonaws.com/api/lapor/"+String.valueOf(index+1),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        if (!response.equalsIgnoreCase("[]")){
-                            try {
-                                hidepDialog();
-                                JSONArray jsonArray = new JSONArray(response);
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    JSONObject obj = jsonArray.getJSONObject(i);
-
-                                    String Tentang = obj.getString("Tentang");
-                                    if (!Tentang.equalsIgnoreCase("Tawuran")) {
-                                        lingkungan.add(Tentang);
-                                    } else {
-                                        kejahatan.add(Tentang);
-                                    }
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                hidepDialog();
-                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                    Toast.makeText(Map.this, "Please Check Your Connection", Toast.LENGTH_LONG).show();
-                }else{
-                    Toast.makeText(Map.this, error+"\nPlease Contact pantidev2017@gmail.com", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-        MySingleton.getInstance(Map.this).addToRequestQueue(dashboard);
-    }
-
     private void showpDialog() {
         if (!pDialog.isShowing())
             pDialog.show();
@@ -502,7 +462,7 @@ public class Map extends FragmentActivity implements LocationListener,
         }
 
         this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Tolong Tekan 2 Kali Untuk Keluar", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Tekan 2 Kali Untuk Keluar", Toast.LENGTH_SHORT).show();
 
         mHandler.postDelayed(mRunnable, 2000);
     }

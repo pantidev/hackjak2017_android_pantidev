@@ -4,6 +4,7 @@
     <string name="Logo">Selamat Datang di TAKO\nPeta dan Pengaduan Sekitar RPTRA</string>
     <string name="approve">Approve</string>
     <string name="sukses">Pelaporan Sukses\nTerima Kasih</string>
+    <string name="Confirm">Apakah Anda Yakin Akan Melaporkan Kejadian Ini ?</string>
 
     <string-array name="Event">
         <item>Pilih Tema Pelaporan</item>

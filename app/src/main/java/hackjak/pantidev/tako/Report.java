@@ -62,6 +62,7 @@ public class Report extends AppCompatActivity {
     final int CAMERA_REQUEST = 2;
 
     private ProgressDialog pDialog;
+    Dialog confirmDialog;
 
     ArrayList<String> photo = new ArrayList<>();
     @Override
@@ -305,13 +306,32 @@ public class Report extends AppCompatActivity {
         }else if(txtPelapor.getText().toString().trim().isEmpty()){
             Toast.makeText(this, "Tolong Ketik Nama Anda Pada Kolom Pelapor", Toast.LENGTH_SHORT).show();
         }else{
-            insert();
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                confirmDialog = new Dialog(Report.this, android.R.style.Theme_Holo_Dialog_NoActionBar_MinWidth);
+
+            } else {
+                confirmDialog = new Dialog(Report.this);
+            }
+            confirmDialog.setContentView(R.layout.confirm_dialog);
+            confirmDialog.show();
         }
     }
 
     public void success(View view){
         onBackPressed();
     }
+
+    public void cancel(View view){
+        confirmDialog.dismiss();
+    }
+
+    public void submit(View view){
+        confirmDialog.dismiss();
+        insert();
+    }
+
+
 
     private void showpDialog() {
         if (!pDialog.isShowing())
