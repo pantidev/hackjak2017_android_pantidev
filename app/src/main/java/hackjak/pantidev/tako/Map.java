@@ -61,7 +61,7 @@ public class Map extends FragmentActivity implements LocationListener,
 
     private GoogleMap mMap;
 
-    TextView tvNama, tvAlamat, tvLuas, tvResmi, tvEmail, tvRepLingkungan, tvRepKejahatan;
+    TextView tvNama, tvAlamat, tvLuas, tvResmi, tvEmail, tvRepLingkungan, tvRepKejahatan,tvLaktasi;
     Button btnReport;
 
     GoogleApiClient mGoogleApiClient;
@@ -72,6 +72,7 @@ public class Map extends FragmentActivity implements LocationListener,
     String URL = "http://ppid.jakarta.go.id/json?url=http://data.jakarta.go.id/dataset/a96e0288-90d8-48b1-9c3a-9db11372e59f/resource/a6ffd51f-279d-49d6-9f33-eed327ea4753/download/RPTRA-Peresmian-sampai-dengan-Maret-2017.csv";
     String TAG = this.getClass().getSimpleName();
     int index = -1;
+    String ruang_laktasi;
 
     Bitmap rptra_bitmap, tawuran_bitmap;
     BitmapDescriptor rptra_icon, tawuran_icon;
@@ -278,19 +279,20 @@ public class Map extends FragmentActivity implements LocationListener,
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
+
                 if (!marker.getTitle().equalsIgnoreCase("Tawuran")){
 
                     index = tempRPTRA.indexOf(marker.getTitle());
-                    String Markid = rptraAr.get(index).getId();
+                    final String Markid = rptraAr.get(index).getId();
                     Log.d("MARKERID",Markid);
+                    Log.d("MARKERID",String.valueOf(Integer.parseInt(Markid)+1));
+
 
                     lingkungan.clear();
                     kejahatan.clear();
-
                     showpDialog();
-                    Log.d("INDEX",String.valueOf(index+1));
                     StringRequest dashboard = new StringRequest(Request.Method.GET,
-                            "http://awseb-e-e-awsebloa-19aedqm1ecvzp-1894315445.ap-southeast-1.elb.amazonaws.com/api/lapor/"+String.valueOf(index+1),
+                            "http://awseb-e-e-awsebloa-19aedqm1ecvzp-1894315445.ap-southeast-1.elb.amazonaws.com/api/lapor/"+Markid,
                             new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
@@ -313,46 +315,81 @@ public class Map extends FragmentActivity implements LocationListener,
                                             e.printStackTrace();
                                         }
                                     }
-                                    final Dialog markerDialog;
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                        markerDialog = new Dialog(Map.this, android.R.style.Theme_Material_Dialog_Alert);
 
-                                    } else {
-                                        markerDialog = new Dialog(Map.this);
-                                    }
+                                    //Ruang laktasi
 
-                                    markerDialog.setTitle("Detail RPTRA");
-                                    markerDialog.getWindow().setBackgroundDrawableResource(R.drawable.box_ash);
-                                    markerDialog.setContentView(R.layout.detail_marker);
+                                    StringRequest laktasi = new StringRequest(Request.Method.GET,
+                                            "http://awseb-e-e-awsebloa-19aedqm1ecvzp-1894315445.ap-southeast-1.elb.amazonaws.com/api/rl/"+String.valueOf(Integer.parseInt(Markid)+1),
+                                            new Response.Listener<String>() {
+                                                @Override
+                                                public void onResponse(String response) {
+                                                    try {
+                                                        JSONObject obj = new JSONObject(response);
 
-                                    tvNama = markerDialog.findViewById(R.id.tvNama);
-                                    tvAlamat = markerDialog.findViewById(R.id.tvAlamat);
-                                    tvLuas = markerDialog.findViewById(R.id.tvLuas);
-                                    tvResmi = markerDialog.findViewById(R.id.tvResmi);
-                                    tvEmail = markerDialog.findViewById(R.id.tvEmail);
-                                    btnReport = markerDialog.findViewById(R.id.btnReport);
-                                    tvRepLingkungan = markerDialog.findViewById(R.id.tvRepLingkungan);
-                                    tvRepKejahatan = markerDialog.findViewById(R.id.tvRepKejahatan);
+                                                            ruang_laktasi = obj.getString("ketersediaan_ruang_laktasi").replace("Ya","Ada");
+                                                            Log.d("RUANG",ruang_laktasi);
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
 
-                                    tvNama.setText(rptraAr.get(index).getNama());
-                                    tvAlamat.setText(rptraAr.get(index).getAddress());
-                                    tvLuas.setText(rptraAr.get(index).getLuas()+"m2");
-                                    tvResmi.setText(rptraAr.get(index).getWaktuperesmian());
-                                    tvEmail.setText(rptraAr.get(index).getEmail());
-                                    tvRepLingkungan.setText(String.valueOf(lingkungan.size()));
-                                    tvRepKejahatan.setText(String.valueOf(kejahatan.size()));
 
-                                    btnReport.setOnClickListener(new View.OnClickListener() {
+                                                    final Dialog markerDialog;
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                                        markerDialog = new Dialog(Map.this, android.R.style.Theme_Material_Dialog_Alert);
+
+                                                    } else {
+                                                        markerDialog = new Dialog(Map.this);
+                                                    }
+
+                                                    markerDialog.setTitle("Detail RPTRA");
+                                                    markerDialog.getWindow().setBackgroundDrawableResource(R.drawable.box_ash);
+                                                    markerDialog.setContentView(R.layout.detail_marker);
+
+                                                    tvNama = markerDialog.findViewById(R.id.tvNama);
+                                                    tvAlamat = markerDialog.findViewById(R.id.tvAlamat);
+                                                    tvLuas = markerDialog.findViewById(R.id.tvLuas);
+                                                    tvResmi = markerDialog.findViewById(R.id.tvResmi);
+                                                    tvEmail = markerDialog.findViewById(R.id.tvEmail);
+                                                    btnReport = markerDialog.findViewById(R.id.btnReport);
+                                                    tvRepLingkungan = markerDialog.findViewById(R.id.tvRepLingkungan);
+                                                    tvRepKejahatan = markerDialog.findViewById(R.id.tvRepKejahatan);
+                                                    tvLaktasi = markerDialog.findViewById(R.id.tvLaktasi);
+
+                                                    tvNama.setText(rptraAr.get(index).getNama());
+                                                    tvAlamat.setText(rptraAr.get(index).getAddress());
+                                                    tvLuas.setText(rptraAr.get(index).getLuas()+"m2");
+                                                    tvResmi.setText(rptraAr.get(index).getWaktuperesmian());
+                                                    tvEmail.setText(rptraAr.get(index).getEmail());
+                                                    tvRepLingkungan.setText(String.valueOf(lingkungan.size()));
+                                                    tvRepKejahatan.setText(String.valueOf(kejahatan.size()));
+                                                    tvLaktasi.setText(ruang_laktasi);
+
+                                                    btnReport.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            Intent report = new Intent(Map.this,Report.class);
+                                                            report.putExtra("id",rptraAr.get(index).getId());
+                                                            report.putExtra("nama",rptraAr.get(index).getNama());
+                                                            startActivity(report);
+                                                        }
+                                                    });
+
+                                                    markerDialog.show();
+                                                }
+                                            }, new Response.ErrorListener() {
                                         @Override
-                                        public void onClick(View view) {
-                                            Intent report = new Intent(Map.this,Report.class);
-                                            report.putExtra("id",rptraAr.get(index).getId());
-                                            report.putExtra("nama",rptraAr.get(index).getNama());
-                                            startActivity(report);
+                                        public void onErrorResponse(VolleyError error) {
+                                            if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                                                Toast.makeText(Map.this, "Coba Cek Koneksi Anda", Toast.LENGTH_LONG).show();
+                                            }else{
+                                                Toast.makeText(Map.this, error+"\nTolong kirim email : pantidev2017@gmail.com", Toast.LENGTH_LONG).show();
+                                            }
                                         }
                                     });
+                                    MySingleton.getInstance(Map.this).addToRequestQueue(laktasi);
+                                      laktasi.setRetryPolicy(new DefaultRetryPolicy(15000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-                                    markerDialog.show();
+
                                 }
 
                             }, new Response.ErrorListener() {
