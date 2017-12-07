@@ -1,20 +1,19 @@
 package hackjak.pantidev.tako;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
+
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,14 +23,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.kosalgeek.android.photoutil.PhotoLoader;
 
 import org.json.JSONArray;
@@ -43,6 +41,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map;
+
 
 /**
  * Created by bsupriadi on 12/6/2017.
@@ -62,6 +61,8 @@ public class Report extends AppCompatActivity {
     CustomCamera cameraPhoto;
     final int CAMERA_REQUEST = 2;
 
+    private ProgressDialog pDialog;
+
     ArrayList<String> photo = new ArrayList<>();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,6 +76,10 @@ public class Report extends AppCompatActivity {
 
         llReportImage = findViewById(R.id.llReportImage);
         spnEvent = findViewById(R.id.spnEvent);
+
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Menunggu...");
+        pDialog.setCancelable(false);
 
         //@SuppressLint("ResourceType")
         //ArrayAdapter<String>adapter = new ArrayAdapter<String>(Report.this,android.R.layout.simple_dropdown_item_1line,R.array.Event);
@@ -235,48 +240,38 @@ public class Report extends AppCompatActivity {
 
     }
 
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.approve_menu,menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-    */
-
-    /*
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id){
-            case R.id.approve:
-                if (spnEvent.getSelectedItem().equals("Pilih Tema Pelaporan")){
-                    Toast.makeText(this, "Tolong Pilih Tema Pelaporan", Toast.LENGTH_SHORT).show();
-                }else if (llReportImage.getChildCount()==0){
-                    Toast.makeText(this, "Tolong Berikan 1 Foto TKP ", Toast.LENGTH_SHORT).show();
-                }else if(txtPesan.getText().toString().trim().isEmpty()){
-                    Toast.makeText(this, "Tolong Isi Pesan / Keterangan Kejadian", Toast.LENGTH_SHORT).show();
-                }else if(txtPelapor.getText().toString().trim().isEmpty()){
-                    Toast.makeText(this, "Tolong Ketik Nama Anda Pada Kolom Pelapor", Toast.LENGTH_SHORT).show();
-                }else{
-
-                }
-                break;
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
-    */
-
     public void insert(){
+        showpDialog();
         StringRequest req_rptra = new StringRequest(Request.Method.POST,
                 "http://awseb-e-e-awsebloa-19aedqm1ecvzp-1894315445.ap-southeast-1.elb.amazonaws.com/api/lapor"
                 , new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                hidepDialog();
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String status = jsonObject.getString("status");
+                    if (status.equalsIgnoreCase("ok")){
+                        onBackPressed();
+                        Dialog okDialog;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            okDialog = new Dialog(Report.this, android.R.style.Theme_Holo_Dialog_NoActionBar_MinWidth);
+
+                        } else {
+                            okDialog = new Dialog(Report.this);
+                        }
+                        okDialog.setContentView(R.layout.success_dialog);
+                        okDialog.show();
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                hidepDialog();
                 if (error instanceof TimeoutError || error instanceof NoConnectionError) {
                     Toast.makeText(Report.this, "Please Check Your Connection", Toast.LENGTH_LONG).show();
                 }else{
@@ -295,10 +290,21 @@ public class Report extends AppCompatActivity {
             }
         };
         MySingleton.getInstance(Report.this).addToRequestQueue(req_rptra);
+        req_rptra.setRetryPolicy(new DefaultRetryPolicy(15000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
 
     }
 
     public void submitReport(View view) {
+        Dialog okDialog;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            okDialog = new Dialog(Report.this, android.R.style.Theme_Holo_Dialog_NoActionBar_MinWidth);
+
+        } else {
+            okDialog = new Dialog(Report.this);
+        }
+        okDialog.setContentView(R.layout.success_dialog);
+        okDialog.show();
         if (spnEvent.getSelectedItem().equals("Pilih Tema Pelaporan")){
             Toast.makeText(this, "Tolong Pilih Tema Pelaporan", Toast.LENGTH_SHORT).show();
         }else if (llReportImage.getChildCount()==0){
@@ -308,7 +314,22 @@ public class Report extends AppCompatActivity {
         }else if(txtPelapor.getText().toString().trim().isEmpty()){
             Toast.makeText(this, "Tolong Ketik Nama Anda Pada Kolom Pelapor", Toast.LENGTH_SHORT).show();
         }else{
-
+            insert();
         }
     }
+
+    public void success(View view){
+        onBackPressed();
+    }
+
+    private void showpDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hidepDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
+    }
+
 }

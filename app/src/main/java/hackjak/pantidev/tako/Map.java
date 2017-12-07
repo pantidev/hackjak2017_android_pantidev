@@ -2,6 +2,7 @@ package hackjak.pantidev.tako;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,6 +23,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -58,24 +60,30 @@ public class Map extends FragmentActivity implements LocationListener,
 
     private GoogleMap mMap;
 
-    TextView tvNama, tvAlamat, tvLuas, tvResmi, tvEmail;
+    TextView tvNama, tvAlamat, tvLuas, tvResmi, tvEmail, tvRepLingkungan, tvRepKejahatan;
     Button btnReport;
 
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
     private LocationManager locationManager;
     Location location;
+
     String URL = "http://ppid.jakarta.go.id/json?url=http://data.jakarta.go.id/dataset/a96e0288-90d8-48b1-9c3a-9db11372e59f/resource/a6ffd51f-279d-49d6-9f33-eed327ea4753/download/RPTRA-Peresmian-sampai-dengan-Maret-2017.csv";
     String TAG = this.getClass().getSimpleName();
+    int index = -1;
 
     Bitmap rptra_bitmap, tawuran_bitmap;
     BitmapDescriptor rptra_icon, tawuran_icon;
 
     ArrayList<Rptra_Setter_Getter> rptraAr = new ArrayList<>();
     ArrayList<String>tempRPTRA = new ArrayList<>();
+    ArrayList<String>lingkungan = new ArrayList<>();
+    ArrayList<String>kejahatan = new ArrayList<>();
 
     private static final long INTERVAL = 1000 * 20;
     private static final long FASTEST_INTERVAL = 1000 * 10;
+
+    private ProgressDialog pDialog;
 
 
     protected void createLocationRequest() {
@@ -101,6 +109,10 @@ public class Map extends FragmentActivity implements LocationListener,
                 .build();
 
         createLocationRequest();
+
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Menunggu...");
+        pDialog.setCancelable(false);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -162,14 +174,16 @@ public class Map extends FragmentActivity implements LocationListener,
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setRotateGesturesEnabled(true);
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-3.503399, 112.423781), 4.0f));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-6.203698, 106.840425), 11.0f));
 
 
         //get taman
+        showpDialog();
         StringRequest req_rptra = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
+                    hidepDialog();
                     JSONArray jsonArray = new JSONArray(response);
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject obj = jsonArray.getJSONObject(i);
@@ -206,14 +220,17 @@ public class Map extends FragmentActivity implements LocationListener,
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                hidepDialog();
                 if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                    Toast.makeText(Map.this, "Please Check Your Connection", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Map.this, "Coba Cek Koneksi Anda", Toast.LENGTH_LONG).show();
                 }else{
-                    Toast.makeText(Map.this, error+"\nPlease Contact pantidev2017@gmail.com", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Map.this, error+"\nTolong kirim email : pantidev2017@gmail.com", Toast.LENGTH_LONG).show();
                 }
             }
         });
         MySingleton.getInstance(Map.this).addToRequestQueue(req_rptra);
+        req_rptra.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
 
         //Get tawuran
         StringRequest tawuran = new StringRequest(Request.Method.GET,
@@ -223,6 +240,7 @@ public class Map extends FragmentActivity implements LocationListener,
                     public void onResponse(String response) {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
+                            Log.d("TAWURAN",response);
                             JSONArray jsonArray = jsonObject.getJSONArray("data");
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject obj = jsonArray.getJSONObject(i);
@@ -230,8 +248,8 @@ public class Map extends FragmentActivity implements LocationListener,
                                 String id = obj.getString("id");
                                 String lokasi = obj.getString("lokasi");
                                 String unsur = obj.getString("unsur");
-                                Double latitude = Double.valueOf(obj.getString("latitude_lokasi"));
-                                Double longitude = Double.valueOf(obj.getString("longitude_lokasi"));
+                                Double latitude = Double.valueOf(obj.getString("latitude"));
+                                Double longitude = Double.valueOf(obj.getString("longitude"));
 
 
                                 mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("Tawuran").icon(tawuran_icon));
@@ -245,56 +263,109 @@ public class Map extends FragmentActivity implements LocationListener,
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                    Toast.makeText(Map.this, "Please Check Your Connection", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Map.this, "Coba Cek Koneksi Anda", Toast.LENGTH_LONG).show();
                 }else{
-                    Toast.makeText(Map.this, error+"\nPlease Contact pantidev2017@gmail.com", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Map.this, error+"\nTolong kirim email : pantidev2017@gmail.com", Toast.LENGTH_LONG).show();
                 }
             }
         });
         MySingleton.getInstance(Map.this).addToRequestQueue(tawuran);
+        tawuran.setRetryPolicy(new DefaultRetryPolicy(15000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
                 if (!marker.getTitle().equalsIgnoreCase("Tawuran")){
-                    final Dialog markerDialog;
-                    final int index = tempRPTRA.indexOf(marker.getTitle());
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        markerDialog = new Dialog(Map.this, android.R.style.Theme_Material_Dialog_Alert);
 
-                    } else {
-                        markerDialog = new Dialog(Map.this);
-                    }
+                    index = tempRPTRA.indexOf(marker.getTitle());
+                    String Markid = rptraAr.get(index).getId();
+                    Log.d("MARKERID",Markid);
 
-                    markerDialog.setTitle("Detail RPTRA");
-                    markerDialog.getWindow().setBackgroundDrawableResource(R.drawable.box_ash);
-                    markerDialog.setContentView(R.layout.detail_marker);
+                    lingkungan.clear();
+                    kejahatan.clear();
+                    showpDialog();
+                    Log.d("INDEX",String.valueOf(index+1));
+                    StringRequest dashboard = new StringRequest(Request.Method.GET,
+                            "http://awseb-e-e-awsebloa-19aedqm1ecvzp-1894315445.ap-southeast-1.elb.amazonaws.com/api/lapor/"+String.valueOf(index+1),
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    if (!response.equalsIgnoreCase("[]")){
 
-                    tvNama = markerDialog.findViewById(R.id.tvNama);
-                    tvAlamat = markerDialog.findViewById(R.id.tvAlamat);
-                    tvLuas = markerDialog.findViewById(R.id.tvLuas);
-                    tvResmi = markerDialog.findViewById(R.id.tvResmi);
-                    tvEmail = markerDialog.findViewById(R.id.tvEmail);
-                    btnReport = markerDialog.findViewById(R.id.btnReport);
+                                        try {
+                                            hidepDialog();
+                                            JSONArray jsonArray = new JSONArray(response);
+                                            for (int i = 0; i < jsonArray.length(); i++) {
+                                                JSONObject obj = jsonArray.getJSONObject(i);
 
-                    tvNama.setText(rptraAr.get(index).getNama());
-                    tvAlamat.setText(rptraAr.get(index).getAddress());
-                    tvLuas.setText(rptraAr.get(index).getLuas()+"m2");
-                    tvResmi.setText(rptraAr.get(index).getWaktuperesmian());
-                    tvEmail.setText(rptraAr.get(index).getEmail());
+                                                String Tentang = obj.getString("Tentang");
+                                                if (Tentang.equalsIgnoreCase("Lingkungan")) {
+                                                    lingkungan.add(Tentang);
+                                                } else {
+                                                    kejahatan.add(Tentang);
+                                                }
+                                            }
+                                            final Dialog markerDialog;
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                                markerDialog = new Dialog(Map.this, android.R.style.Theme_Material_Dialog_Alert);
 
-                    btnReport.setOnClickListener(new View.OnClickListener() {
+                                            } else {
+                                                markerDialog = new Dialog(Map.this);
+                                            }
+
+                                            markerDialog.setTitle("Detail RPTRA");
+                                            markerDialog.getWindow().setBackgroundDrawableResource(R.drawable.box_ash);
+                                            markerDialog.setContentView(R.layout.detail_marker);
+
+                                            tvNama = markerDialog.findViewById(R.id.tvNama);
+                                            tvAlamat = markerDialog.findViewById(R.id.tvAlamat);
+                                            tvLuas = markerDialog.findViewById(R.id.tvLuas);
+                                            tvResmi = markerDialog.findViewById(R.id.tvResmi);
+                                            tvEmail = markerDialog.findViewById(R.id.tvEmail);
+                                            btnReport = markerDialog.findViewById(R.id.btnReport);
+                                            tvRepLingkungan = markerDialog.findViewById(R.id.tvRepLingkungan);
+                                            tvRepKejahatan = markerDialog.findViewById(R.id.tvRepKejahatan);
+
+                                            tvNama.setText(rptraAr.get(index).getNama());
+                                            tvAlamat.setText(rptraAr.get(index).getAddress());
+                                            tvLuas.setText(rptraAr.get(index).getLuas()+"m2");
+                                            tvResmi.setText(rptraAr.get(index).getWaktuperesmian());
+                                            tvEmail.setText(rptraAr.get(index).getEmail());
+                                            tvRepLingkungan.setText(String.valueOf(lingkungan.size()));
+                                            tvRepKejahatan.setText(String.valueOf(kejahatan.size()));
+
+                                            btnReport.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    Intent report = new Intent(Map.this,Report.class);
+                                                    report.putExtra("id",rptraAr.get(index).getId());
+                                                    report.putExtra("nama",rptraAr.get(index).getNama());
+                                                    startActivity(report);
+                                                }
+                                            });
+
+                                            markerDialog.show();
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
+                            }, new Response.ErrorListener() {
                         @Override
-                        public void onClick(View view) {
-                            Intent report = new Intent(Map.this,Report.class);
-                            report.putExtra("id",rptraAr.get(index).getId());
-                            report.putExtra("nama",rptraAr.get(index).getNama());
-                            startActivity(report);
+                        public void onErrorResponse(VolleyError error) {
+                            hidepDialog();
+                            if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                                Toast.makeText(Map.this, "Please Check Your Connection", Toast.LENGTH_LONG).show();
+                            }else{
+                                Toast.makeText(Map.this, error+"\nPlease Contact pantidev2017@gmail.com", Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
+                    MySingleton.getInstance(Map.this).addToRequestQueue(dashboard);
+                    dashboard.setRetryPolicy(new DefaultRetryPolicy(15000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
 
-                    markerDialog.show();
                 }
                     return true;
             }
@@ -350,6 +421,89 @@ public class Map extends FragmentActivity implements LocationListener,
         PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
 
-        Log.d(TAG, "Location update started ..............: ");
+        Log.d(TAG, "Location u" +
+                "pdate started ..............: ");
+    }
+
+    public void getReport(){
+        lingkungan.clear();
+        kejahatan.clear();
+        showpDialog();
+        Log.d("INDEX",String.valueOf(index+1));
+        StringRequest dashboard = new StringRequest(Request.Method.GET,
+                "http://awseb-e-e-awsebloa-19aedqm1ecvzp-1894315445.ap-southeast-1.elb.amazonaws.com/api/lapor/"+String.valueOf(index+1),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if (!response.equalsIgnoreCase("[]")){
+                            try {
+                                hidepDialog();
+                                JSONArray jsonArray = new JSONArray(response);
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject obj = jsonArray.getJSONObject(i);
+
+                                    String Tentang = obj.getString("Tentang");
+                                    if (!Tentang.equalsIgnoreCase("Tawuran")) {
+                                        lingkungan.add(Tentang);
+                                    } else {
+                                        kejahatan.add(Tentang);
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                hidepDialog();
+                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                    Toast.makeText(Map.this, "Please Check Your Connection", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(Map.this, error+"\nPlease Contact pantidev2017@gmail.com", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        MySingleton.getInstance(Map.this).addToRequestQueue(dashboard);
+    }
+
+    private void showpDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hidepDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
+    }
+
+    private boolean doubleBackToExitPressedOnce;
+    private Handler mHandler = new Handler();
+
+    private final Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            doubleBackToExitPressedOnce = false;
+        }
+    };
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                finishAffinity();
+            }else{
+                Map.this.finish();
+            }
+
+
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Tolong Tekan 2 Kali Untuk Keluar", Toast.LENGTH_SHORT).show();
+
+        mHandler.postDelayed(mRunnable, 2000);
     }
 }

@@ -40,18 +40,30 @@
         <activity
             android:name=".Map"
             android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps">
+
+        </activity>
         <activity
             android:name=".Start"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="Tako">
+            android:label="Tako"
+            android:theme="@style/SplashTheme">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
         </activity>
+
         <activity
             android:name=".Report"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="Lapor"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+        </activity>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -62,15 +74,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-
-        <activity android:name=".LaunchActivity"
-            android:theme="@style/SplashTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>
