@@ -294,10 +294,9 @@ public class Map extends FragmentActivity implements LocationListener,
                             new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
-                                    if (!response.equalsIgnoreCase("[]")){
-
+                                    hidepDialog();
+                                    if (!response.equalsIgnoreCase("[]")) {
                                         try {
-                                            hidepDialog();
                                             JSONArray jsonArray = new JSONArray(response);
                                             for (int i = 0; i < jsonArray.length(); i++) {
                                                 JSONObject obj = jsonArray.getJSONObject(i);
@@ -309,51 +308,53 @@ public class Map extends FragmentActivity implements LocationListener,
                                                     kejahatan.add(Tentang);
                                                 }
                                             }
-                                            final Dialog markerDialog;
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                                markerDialog = new Dialog(Map.this, android.R.style.Theme_Material_Dialog_Alert);
 
-                                            } else {
-                                                markerDialog = new Dialog(Map.this);
-                                            }
-
-                                            markerDialog.setTitle("Detail RPTRA");
-                                            markerDialog.getWindow().setBackgroundDrawableResource(R.drawable.box_ash);
-                                            markerDialog.setContentView(R.layout.detail_marker);
-
-                                            tvNama = markerDialog.findViewById(R.id.tvNama);
-                                            tvAlamat = markerDialog.findViewById(R.id.tvAlamat);
-                                            tvLuas = markerDialog.findViewById(R.id.tvLuas);
-                                            tvResmi = markerDialog.findViewById(R.id.tvResmi);
-                                            tvEmail = markerDialog.findViewById(R.id.tvEmail);
-                                            btnReport = markerDialog.findViewById(R.id.btnReport);
-                                            tvRepLingkungan = markerDialog.findViewById(R.id.tvRepLingkungan);
-                                            tvRepKejahatan = markerDialog.findViewById(R.id.tvRepKejahatan);
-
-                                            tvNama.setText(rptraAr.get(index).getNama());
-                                            tvAlamat.setText(rptraAr.get(index).getAddress());
-                                            tvLuas.setText(rptraAr.get(index).getLuas()+"m2");
-                                            tvResmi.setText(rptraAr.get(index).getWaktuperesmian());
-                                            tvEmail.setText(rptraAr.get(index).getEmail());
-                                            tvRepLingkungan.setText(String.valueOf(lingkungan.size()));
-                                            tvRepKejahatan.setText(String.valueOf(kejahatan.size()));
-
-                                            btnReport.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    Intent report = new Intent(Map.this,Report.class);
-                                                    report.putExtra("id",rptraAr.get(index).getId());
-                                                    report.putExtra("nama",rptraAr.get(index).getNama());
-                                                    startActivity(report);
-                                                }
-                                            });
-
-                                            markerDialog.show();
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
                                     }
+                                    final Dialog markerDialog;
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                        markerDialog = new Dialog(Map.this, android.R.style.Theme_Material_Dialog_Alert);
+
+                                    } else {
+                                        markerDialog = new Dialog(Map.this);
+                                    }
+
+                                    markerDialog.setTitle("Detail RPTRA");
+                                    markerDialog.getWindow().setBackgroundDrawableResource(R.drawable.box_ash);
+                                    markerDialog.setContentView(R.layout.detail_marker);
+
+                                    tvNama = markerDialog.findViewById(R.id.tvNama);
+                                    tvAlamat = markerDialog.findViewById(R.id.tvAlamat);
+                                    tvLuas = markerDialog.findViewById(R.id.tvLuas);
+                                    tvResmi = markerDialog.findViewById(R.id.tvResmi);
+                                    tvEmail = markerDialog.findViewById(R.id.tvEmail);
+                                    btnReport = markerDialog.findViewById(R.id.btnReport);
+                                    tvRepLingkungan = markerDialog.findViewById(R.id.tvRepLingkungan);
+                                    tvRepKejahatan = markerDialog.findViewById(R.id.tvRepKejahatan);
+
+                                    tvNama.setText(rptraAr.get(index).getNama());
+                                    tvAlamat.setText(rptraAr.get(index).getAddress());
+                                    tvLuas.setText(rptraAr.get(index).getLuas()+"m2");
+                                    tvResmi.setText(rptraAr.get(index).getWaktuperesmian());
+                                    tvEmail.setText(rptraAr.get(index).getEmail());
+                                    tvRepLingkungan.setText(String.valueOf(lingkungan.size()));
+                                    tvRepKejahatan.setText(String.valueOf(kejahatan.size()));
+
+                                    btnReport.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Intent report = new Intent(Map.this,Report.class);
+                                            report.putExtra("id",rptraAr.get(index).getId());
+                                            report.putExtra("nama",rptraAr.get(index).getNama());
+                                            startActivity(report);
+                                        }
+                                    });
+
+                                    markerDialog.show();
                                 }
+
                             }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
