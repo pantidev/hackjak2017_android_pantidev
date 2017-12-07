@@ -7,7 +7,7 @@
 2. http://ppid.jakarta.go.id/json?url=http://data.jakarta.go.id/dataset/a96e0288-90d8-48b1-9c3a-9db11372e59f/resource/a6ffd51f-279d-49d6-9f33-eed327ea4753/download/RPTRA-Peresmian-sampai-dengan-Maret-2017.csv
 3. http://api.jakarta.go.id/ruang-publik/tawuran
 
-the rest of application hereby:
+the rest of the functionalities within the app here by licensed as explained below.
 
 MIT License
 
