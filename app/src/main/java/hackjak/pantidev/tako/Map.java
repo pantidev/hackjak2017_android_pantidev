@@ -20,6 +20,8 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,6 +65,7 @@ public class Map extends FragmentActivity implements LocationListener,
 
     TextView tvNama, tvAlamat, tvLuas, tvResmi, tvEmail, tvRepLingkungan, tvRepKejahatan,tvLaktasi;
     Button btnReport;
+    Switch swTraffic;
 
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
@@ -102,6 +105,7 @@ public class Map extends FragmentActivity implements LocationListener,
         setContentView(R.layout.map);
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        swTraffic = findViewById(R.id.swTraffic);
 
         //Using Google Location Service to get Current Latitude & Longitude
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -179,6 +183,18 @@ public class Map extends FragmentActivity implements LocationListener,
         mMap.getUiSettings().setRotateGesturesEnabled(true);
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-6.203698, 106.840425), 11.0f));
 
+        swTraffic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (compoundButton.isChecked()){
+                    mMap.setTrafficEnabled(true);
+                    swTraffic.setText("Traffic On   ");
+                }else{
+                    mMap.setTrafficEnabled(false);
+                    swTraffic.setText("Traffic Off   ");
+                }
+            }
+        });
 
         //get taman
         showpDialog();

@@ -11,7 +11,7 @@
             android:layout_marginTop="15sp"
             android:layout_width="100sp"
             android:layout_height="100sp"
-            android:src="@drawable/suc"
+            android:src="@drawable/info_icon"
             android:layout_gravity="center"
             />
 
