@@ -1,7 +1,7 @@
 # hackjak2017_android_pantidev
 ## repository for hackjack 2017 developed by Bobby Supriyadi, Dennis, Edwin Wicaksono A.K.A pantidev.
 
-[[https://doc-14-b4-docs.googleusercontent.com/docs/securesc/ha0ro937gcuc7l7deffksulhg5h7mbp1/3lf3cbh57l2v2a4c445uvva3digo897k/1512648000000/11761017518561042133/*/1WG0ks_PUronWkRGQqaGzCrxnudBF13z7]]
+[[https://doc-14-b4-docs.googleusercontent.com/docs/securesc/ha0ro937gcuc7l7deffksulhg5h7mbp1/3lf3cbh57l2v2a4c445uvva3digo897k/1512648000000/11761017518561042133/*/1WG0ks_PUronWkRGQqaGzCrxnudBF13z7 ]]
 
 ## data owned by Pemprov DKI Jakarta which has been used in this application as listed bellow:
 
