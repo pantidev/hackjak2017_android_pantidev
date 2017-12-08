@@ -254,7 +254,7 @@ public class Map extends FragmentActivity implements LocationListener,
 
         //Get tawuran
         StringRequest tawuran = new StringRequest(Request.Method.GET,
-                "http://awseb-e-e-awsebloa-19aedqm1ecvzp-1894315445.ap-southeast-1.elb.amazonaws.com/tawuran",
+                "http://awseb-e-e-awsebloa-19aedqm1ecvzp-1894315445.ap-southeast-1.elb.amazonaws.com/api/tawuran",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
