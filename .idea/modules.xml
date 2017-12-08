@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hackjak2017_android_pantidev.iml" filepath="$PROJECT_DIR$/hackjak2017_android_pantidev.iml" />
       <module fileurl="file://$PROJECT_DIR$/hackjak2017_android_pantidev.iml" filepath="$PROJECT_DIR$/hackjak2017_android_pantidev.iml" />
     </modules>
   </component>

@@ -4,14 +4,15 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#fff">
+    android:background="@color/white">
 
 
         <ImageView
             android:layout_marginTop="15sp"
-            android:layout_width="100sp"
-            android:layout_height="100sp"
+            android:layout_width="80sp"
+            android:layout_height="80sp"
             android:src="@drawable/info_icon"
+            android:tint="#408a8c8e"
             android:layout_gravity="center"
             />
 
@@ -24,7 +25,8 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:textColor="#000"
-        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textSize="18sp"
         android:text="@string/Confirm"/>
 
     <LinearLayout
@@ -39,9 +41,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Tidak"
+        android:textColor="#000000"
         android:id="@+id/btnCancel"
         android:onClick="cancel"
-        android:background="#47ff50"
+        android:background="@drawable/box_ash"
         android:layout_marginRight="20sp"
 
         />
@@ -49,10 +52,11 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#000000"
         android:text="Ya"
         android:id="@+id/btnConfirm"
         android:onClick="submit"
-        android:background="#47ff50"
+        android:background="@drawable/box_ash"
         />
     </LinearLayout>
 

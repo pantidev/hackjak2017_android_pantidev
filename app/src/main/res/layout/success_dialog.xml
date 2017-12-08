@@ -37,7 +37,7 @@
         android:layout_marginBottom="15sp"
         android:id="@+id/btnOk"
         android:onClick="success"
-        android:background="#47ff50"
+        android:background="@drawable/box_ash"
         />
 
 </LinearLayout>
