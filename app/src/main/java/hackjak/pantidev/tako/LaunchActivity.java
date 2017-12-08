@@ -20,6 +20,7 @@ public class LaunchActivity extends AppCompatActivity {
     static final int WRITE_EXTERNAL = 2;
     static final int CAMERA = 3;
     int PERMISSION_ALL = 0;
+    int counter=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,21 +34,31 @@ public class LaunchActivity extends AppCompatActivity {
         String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA};
 
-        if (!hasPermissions(this, PERMISSIONS)) {
-            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
-        }else{
+        //if (!hasPermissions(this, PERMISSIONS)) {
+        //    ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+
+        for(String permission : PERMISSIONS) {
+            if (!hasPermissions(this, permission))
+                ActivityCompat.requestPermissions(this, new String[]{permission}, PERMISSION_ALL);
+        }
+
+        if(counter==3){
             Intent map = new Intent(this,Map.class);
             startActivity(map);
+        }
+        else
+        {
+            permission_cek();
         }
     }
 
     public static boolean hasPermissions(Context context, String... permissions) {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
-            for (String permission : permissions) {
-                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+            //for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permissions[0]) != PackageManager.PERMISSION_GRANTED) {
                     return false;
                 }
-            }
+            //}
         }
         return true;
     }
@@ -59,6 +70,7 @@ public class LaunchActivity extends AppCompatActivity {
         switch (requestCode) {
             case LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    counter++;
                     //Toast.makeText(LoginActivity.this, "Permission Accept!", Toast.LENGTH_SHORT).show();
 
                 } else {
@@ -69,6 +81,7 @@ public class LaunchActivity extends AppCompatActivity {
             case WRITE_EXTERNAL:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //Toast.makeText(Start.this, "Permission Accept!", Toast.LENGTH_SHORT).show();
+                    counter++;
 
                 } else {
                     //Toast.makeText(Start.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
@@ -78,6 +91,7 @@ public class LaunchActivity extends AppCompatActivity {
             case CAMERA:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //Toast.makeText(LoginActivity.this, "Permission Accept!", Toast.LENGTH_SHORT).show();
+                    counter++;
 
                 } else {
                     //Toast.makeText(LoginActivity.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
@@ -88,6 +102,7 @@ public class LaunchActivity extends AppCompatActivity {
         }
     }
 
+    /*
     public void cekOverlay(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(this)) {
@@ -104,4 +119,5 @@ public class LaunchActivity extends AppCompatActivity {
             startActivity(map);
         }
     }
+    */
 }

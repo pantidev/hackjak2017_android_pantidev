@@ -30,6 +30,7 @@ public class Start extends AppCompatActivity {
         permission_cek();
         //finish();
 
+        /*
         a = new Thread(){
             @Override
             public void run() {
@@ -50,6 +51,7 @@ public class Start extends AppCompatActivity {
         };
 
         a.start();
+        */
 
 
 
@@ -61,10 +63,12 @@ public class Start extends AppCompatActivity {
 
         if (!hasPermissions(this, PERMISSIONS)) {
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+
         }else{
             Intent map = new Intent(Start.this,Map.class);
             startActivity(map);
-            a.interrupt();
+            finish();
+            //a.interrupt();
             /*Handler wait = new Handler();
             wait.postDelayed(new Runnable() {
                 @Override
@@ -90,36 +94,21 @@ public class Start extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        switch (requestCode) {
-            case LOCATION:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //Toast.makeText(LoginActivity.this, "Permission Accept!", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    //Toast.makeText(Start.this, "For ", Toast.LENGTH_SHORT).show();
-
-                }
-
-            case WRITE_EXTERNAL:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //Toast.makeText(Start.this, "Permission Accept!", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    //Toast.makeText(Start.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
-
-                }
-
-            case CAMERA:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //Toast.makeText(LoginActivity.this, "Permission Accept!", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    //Toast.makeText(LoginActivity.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
-
-                }
-
-
+        int counter = 0;
+        for(int i : grantResults)
+        {
+            if(i==PackageManager.PERMISSION_GRANTED)
+                counter++;
+        }
+        if(counter==3)
+        {
+            Intent map = new Intent(Start.this,Map.class);
+            startActivity(map);
+            finish();
+        }
+        else
+        {
+            permission_cek();
         }
     }
 
