@@ -1,5 +1,5 @@
 # hackjak2017_android_pantidev
-## repository for hackjack 2017 developed by Bobby Supriadi, Dennis, Edwin Wicaksono A.K.A pantidev.
+## repository for hackjack 2017 developed by Boby Supriadi, Dennis, Edwin Wicaksono A.K.A pantidev.
 
 
 
