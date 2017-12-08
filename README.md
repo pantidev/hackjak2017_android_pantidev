@@ -13,7 +13,7 @@ the rest of the functionalities within the app here by licensed as explained bel
 
 MIT License
 
-Copyright (c) 2017 Bobby Supriadi, Dennis, Edwin Wicaksono
+Copyright (c) 2017 Boby Supriadi, Dennis, Edwin Wicaksono
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
